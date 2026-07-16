@@ -6,25 +6,26 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import z from "zod";
 import { OpenAI } from "openai/client.js";
 import errorLogModel from "./models/errorLog.model.js";
+connectDB();
 const PORT = 3000;
 const app = express();
 app.use(express.json());
 app.use(cors());
-connectDB();
 configDotenv();
-app.use(async (req, res, next) => {
-    try {
-        await connectDB();
-        next();
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+// app.use(async (req, res, next) => {
+//     try {
+//         await connectDB();
+//         next();
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 
-app.get("/api/error-log-analytics", async (req, res) => {
+app.post("/api/error-log-analytics", async (req, res) => {
     try {
         const { rawError } = req.body;
         const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
         if (!rawError)
             return res.status(400).json({ error: "No error trace provided" });
 
@@ -50,7 +51,14 @@ app.get("/api/error-log-analytics", async (req, res) => {
                 {
                     role: "system",
                     content:
-                        "You are a senior full-stack compiler diagnostics engine. Strip conversational filler and provide strict code corrections.",
+                        `You are a senior full-stack compiler diagnostics engine. When providing code in the 'codeFix' field: 
+                1. You MUST format it as readable, beautifully indented code. 
+                2. Use '\\n' for every new line and explicit double spaces or tabs for nested blocks. 
+                3. Do NOT output the code as a single-line string. 
+                4. Send the whole corrected code as output not just the specific line that has issue.
+                5. Check for any type of redundancy or potential bugs in the code, and return the most likely fixed output.
+             `
+
                 },
                 {
                     role: "user",

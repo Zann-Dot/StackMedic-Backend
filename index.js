@@ -43,6 +43,15 @@ app.post("/api/error-log-analytics", async (req, res) => {
             explanation: z
                 .string()
                 .describe("A clear 2-sentence breakdown of what went wrong"),
+            description: z
+                .string()
+                .describe("A short one line description of what went wrong"),
+            title: z
+                .string()
+                .describe("A short title max 2-3 words justifing the error log"),
+            language: z
+                .string()
+                .describe("The programming language of the raw code error"),
         });
 
         const completion = await openai.chat.completions.parse({
@@ -50,15 +59,13 @@ app.post("/api/error-log-analytics", async (req, res) => {
             messages: [
                 {
                     role: "system",
-                    content:
-                        `You are a senior full-stack compiler diagnostics engine. When providing code in the 'codeFix' field: 
+                    content: `You are a senior full-stack compiler diagnostics engine. When providing code in the 'codeFix' field: 
                             1. You MUST format it as readable, beautifully indented code. 
                             2. Use '\\n' for every new line and explicit double spaces or tabs for nested blocks. 
                             3. Do NOT output the code as a single-line string. 
                             4. Send the whole corrected code as output not just the specific line that has issue.
                             5. Check for any type of redundancy or potential bugs in the code, and return the most likely fixed output.
-                        `
-
+                        `,
                 },
                 {
                     role: "user",
@@ -76,6 +83,17 @@ app.post("/api/error-log-analytics", async (req, res) => {
         });
 
         res.status(201).json(newLog);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/api/get-error-log", async (req, res) => {
+    try {
+        const errorLog = await errorLogModel.find({});
+        if (!errorLog || errorLog === [])
+            return res.status(404).json({ error: "Error logs not found" });
+        res.json(errorLog);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

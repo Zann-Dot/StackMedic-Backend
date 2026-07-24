@@ -3,6 +3,9 @@ import { Schema, model } from "mongoose";
 const ErrorLogSchema = new Schema(
   {
     rawError: { type: String, required: true },
+    description: { type: String, required: true },
+    title: { type: String, required: true },
+    language: { type: String, required: true },
     explanation: { type: String, required: true },
     errorType: {
       type: String,

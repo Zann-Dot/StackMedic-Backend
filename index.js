@@ -6,20 +6,25 @@ import { zodResponseFormat } from "openai/helpers/zod";
 import z from "zod";
 import { OpenAI } from "openai/client.js";
 import errorLogModel from "./models/errorLog.model.js";
-connectDB();
+// connectDB();
 const PORT = 3000;
 const app = express();
+const corsConfig = {
+    origin: "*",
+    method: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsConfig));
 configDotenv();
-// app.use(async (req, res, next) => {
-//     try {
-//         await connectDB();
-//         next();
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-// });
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 app.post("/api/error-log-analytics", async (req, res) => {
     try {

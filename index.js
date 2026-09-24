@@ -7,6 +7,7 @@ import z from "zod";
 import { OpenAI } from "openai/client.js";
 import projectRouter from "./routes/project.route.js";
 import { clerkMiddleware, getAuth } from "@clerk/express"
+import webhookRouter from "./routes/webhook.js"
 
 // connectDB();
 configDotenv();
@@ -17,6 +18,7 @@ const corsConfig = {
     method: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }
+app.use(webhookRouter)
 app.use(express.json());
 app.use(cors(corsConfig));
 app.use(clerkMiddleware());

@@ -1,6 +1,6 @@
 import { clerkClient, getAuth } from "@clerk/express";
 import express from "express"
-import { Project } from "../models/Project";
+import { Project } from "../models/Project.js";
 const projectRouter = express.Router();
 
 projectRouter.post("/projects", async (req, res) => {

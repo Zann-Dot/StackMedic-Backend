@@ -5,7 +5,7 @@ import { clerkClient } from '@clerk/express'
 const router = express.Router()
 
 router.post(
-    '/api/webhooks/clerk',
+    '/api/webhooks/register',
     express.raw({ type: 'application/json' }),
     async (req, res) => {
         const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET

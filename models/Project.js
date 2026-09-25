@@ -1,32 +1,46 @@
-import mongoose from 'mongoose';
+import { model, Schema } from "mongoose";
+import crypto from "crypto";
 
-const ProjectSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true
+const MemberSchema = new Schema(
+    {
+        clerkUserId: { type: String, required: true },
+        email: { type: String, required: true },
+        role: {
+            type: String,
+            enum: ["admin", "developer"],
+            default: "developer",
+        },
     },
-    description: {
-        type: String,
-        default: ''
-    },
-    ownerClerkId: {
-        type: String,
-        required: true,
-        index: true
-    },
-    members: [
-        {
-            clerkUserId: { type: String, required: true },
-            email: { type: String, required: true },
-            role: { type: String, enum: ['admin', 'developer'], default: 'developer' }
-        }
-    ],
-    apiKey: {
-        type: String,
-        required: true,
-        unique: true
-    }
-}, { timestamps: true });
+    { _id: false },
+);
 
-export const Project = mongoose.model('Project', ProjectSchema);
+const ProjectSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            default: "",
+        },
+        ownerClerkId: {
+            type: String,
+            required: true,
+            index: true,
+        },
+        members: [MemberSchema],
+        apiKey: {
+            type: String,
+            unique: true,
+        },
+    },
+    { timestamps: true },
+);
+
+ProjectSchema.pre("save", async function () {
+    this.apiKey = `sm_live_${crypto.randomBytes(16).toString("hex")}`;
+});
+
+export const Project = model("Project", ProjectSchema);

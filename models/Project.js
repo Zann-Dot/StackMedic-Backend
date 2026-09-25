@@ -40,7 +40,8 @@ const ProjectSchema = new Schema(
 );
 
 ProjectSchema.pre("save", async function () {
-    this.apiKey = `sm_live_${crypto.randomBytes(16).toString("hex")}`;
+    if (!this.apiKey)
+        this.apiKey = `sm_live_${crypto.randomBytes(16).toString("hex")}`;
 });
 
 export const Project = model("Project", ProjectSchema);

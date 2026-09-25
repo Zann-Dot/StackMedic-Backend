@@ -44,4 +44,36 @@ projectRouter.post("/projects", async (req, res) => {
     }
 });
 
+projectRouter.post("/projects/:projectId/members", async (req, res) => {
+    try {
+        const { userId, email, role } = req.body;
+        if (!email || !role)
+            return res
+                .status(404)
+                .json({ error: "Member details was not provided." });
+
+        const project = await Project.findByIdAndUpdate(
+            req.params.projectId,
+            {
+                $push: {
+                    members: {
+                        clerkUserId: userId,
+                        email,
+                        role,
+                    },
+                },
+            },
+            { new: true, runValidators: true },
+        );
+
+        res.json({
+            success: true,
+            message: "Member added successfully",
+            project,
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 export default projectRouter;

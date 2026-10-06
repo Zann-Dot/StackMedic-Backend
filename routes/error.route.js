@@ -4,9 +4,10 @@ import { OpenAI } from "openai/client.js";
 import { zodResponseFormat } from "openai/helpers/zod.mjs";
 import { ErrorLog } from "../models/ErrorLog.js";
 import { generateErrorHash } from "../utilis/generateErrorHash.js";
+import validateIngestion from "../middleware/validateIngestion.js";
 const errorRouter = express.Router();
 
-errorRouter.post("/errors/log", async (req, res) => {
+errorRouter.post("/errors/log", validateIngestion, async (req, res) => {
     try {
         const { rawTrace, loggedByClerkId, project, status } = req.body;
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;

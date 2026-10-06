@@ -28,10 +28,8 @@ app.use(async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 });
-
 app.use("/api", projectRouter);
 app.use("/api", errorRouter);
-
 app.listen(PORT, () => {
     console.log(`server is running on port: ${PORT}`);
 });

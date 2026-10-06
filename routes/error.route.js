@@ -65,11 +65,8 @@ errorRouter.post("/errors/log", async (req, res) => {
             loggedByClerkId,
             project,
             status,
-            errorHash
+            errorHash,
         });
-
-        const deduplicationAlert = {}
-
 
         res.status(201).json({
             success: true,

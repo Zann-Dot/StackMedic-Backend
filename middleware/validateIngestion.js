@@ -1,5 +1,5 @@
 import { getAuth } from "@clerk/express";
-import { Project } from "../models/Project";
+import { Project } from "../models/Project.js";
 
 async function validateIngestion(req, res, next) {
     try {

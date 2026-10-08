@@ -6,6 +6,7 @@ import projectRouter from "./routes/project.route.js";
 import { clerkMiddleware } from "@clerk/express";
 import webhookRouter from "./routes/webhook.js";
 import errorRouter from "./routes/error.route.js";
+import testRouter from "./test/test-token.js";
 
 // connectDB();
 configDotenv();
@@ -30,6 +31,7 @@ app.use(async (req, res, next) => {
 });
 app.use("/api", projectRouter);
 app.use("/api", errorRouter);
+app.use("/api", testRouter)
 app.listen(PORT, () => {
     console.log(`server is running on port: ${PORT}`);
 });

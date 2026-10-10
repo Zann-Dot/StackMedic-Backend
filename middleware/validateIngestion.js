@@ -20,7 +20,7 @@ async function validateIngestion(req, res, next) {
         }
 
         const { userId } = getAuth(req);
-        const { projectId } = req.body;
+        const projectId = req.body?.projectId || req.params?.projectId;
         if (!userId) {
             return res.status(401).json({
                 success: false,

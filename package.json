@@ -21,5 +21,10 @@
     "openai": "^6.45.0",
     "svix": "^2.5.0",
     "zod": "^4.4.3"
+  },
+  "overrides": {
+    "nodemon": {
+      "chokidar": "^4.0.3"
+    }
   }
 }

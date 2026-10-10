@@ -7,6 +7,7 @@ import { clerkMiddleware } from "@clerk/express";
 import webhookRouter from "./routes/webhook.js";
 import errorRouter from "./routes/error.route.js";
 import testRouter from "./test/test-token.js";
+import dashboardRouter from "./routes/dashboard-report.route.js";
 
 // connectDB();
 configDotenv();
@@ -29,9 +30,13 @@ app.use(async (req, res, next) => {
         res.status(500).json({ error: error.message });
     }
 });
+app.get("/", async (req, res) => {
+    res.json({ message: "Hello this is Stack-Medic Server!" })
+})
 app.use("/api", projectRouter);
 app.use("/api", errorRouter);
-app.use("/api", testRouter)
+app.use("/api", dashboardRouter);
+app.use("/api", testRouter);
 app.listen(PORT, () => {
     console.log(`server is running on port: ${PORT}`);
 });

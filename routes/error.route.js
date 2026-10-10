@@ -10,16 +10,17 @@ const errorRouter = express.Router();
 
 errorRouter.post("/errors/log", validateIngestion, async (req, res) => {
     try {
-        const { projectId, loggedByClerkId } = req.projectContext;
-        const { rawTrace, status } = req.body;
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
         const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+        const { projectId, loggedByClerkId } = req.projectContext;
+        const { rawTrace, status } = req.body;
 
         if (!rawTrace)
             return res.status(400).json({ error: "No error trace provided" });
 
         const errorHash = generateErrorHash(rawTrace);
         const duplicateErrorLog = await ErrorLog.findOne({ errorHash });
+
         if (duplicateErrorLog) {
             const userId = duplicateErrorLog.loggedByClerkId;
             const user = (await clerkClient.users.getUser(userId))

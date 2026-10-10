@@ -8,9 +8,11 @@ import webhookRouter from "./routes/webhook.js";
 import errorRouter from "./routes/error.route.js";
 import testRouter from "./test/test-token.js";
 import dashboardRouter from "./routes/dashboard-report.route.js";
+import redisConnect from "./middleware/redis.connect.js";
 
 // connectDB();
 configDotenv();
+redisConnect();
 const PORT = 3000;
 const app = express();
 const corsConfig = {

@@ -97,11 +97,52 @@ dashboardRouter.get(
             },
          ]);
          if (!report)
-            return res.status(400).json({ error: "Cannot get pipeline data." });
+            return res.status(400).json({ error: "Cannot get status report." });
          res.json(report);
       } catch (error) {
          res.status(500).json({ error: error.message });
       }
    },
 );
+
+dashboardRouter.get(
+   "/reports/members/category-distribution",
+   validateIngestion,
+   async (req, res) => {
+      try {
+         const { projectId } = req.projectContext;
+         const startDate = req.dateFilter.$gte;
+         const endDate = req.dateFilter.$lte;
+         const report = await ErrorLog.aggregate([
+            {
+               $match: {
+                  $and: [
+                     { createdAt: { $gte: startDate } },
+                     { createdAt: { $lte: endDate } },
+                     { project: new mongoose.Types.ObjectId(projectId) },
+                  ],
+               },
+            },
+            {
+               $group: {
+                  _id: "$errorCategory",
+                  count: { $sum: 1 }
+               },
+            },
+            {
+               $project: {
+                  _id: 0,
+                  category: "$_id",
+                  count: 1
+               },
+            },
+         ]);
+         if (!report)
+            return res.status(400).json({ error: "Cannot get category report." });
+         res.json(report);
+      } catch (error) {
+         res.status(500).json({ error: error.message });
+      }
+   }
+)
 export default dashboardRouter;
